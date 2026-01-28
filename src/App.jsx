@@ -388,10 +388,74 @@ const JamBandTracker = () => {
     );
   };
 
-  const DiscoverTab = () => (
+  const DiscoverTab = () => {
+    const [customBand, setCustomBand] = useState('');
+
+    const searchCustomBand = async () => {
+      if (!customBand.trim()) {
+        alert('Please enter a band name');
+        return;
+      }
+
+      setLoading(true);
+      
+      try {
+        const response = await fetch(`/.netlify/functions/search-band?artist=${encodeURIComponent(customBand)}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch shows');
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.shows) {
+          if (data.shows.length > 0) {
+            setUpcomingShows(data.shows);
+          } else {
+            alert(`No upcoming shows found for "${customBand}". Try checking the spelling or search for a different artist.`);
+          }
+        } else {
+          throw new Error(data.error || 'Failed to load shows');
+        }
+      } catch (error) {
+        console.error('Error fetching shows:', error);
+        alert(`Unable to find shows for "${customBand}". Please try again.`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Custom Band Search */}
       <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Find Upcoming Shows</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Search Any Band</h2>
+        
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={customBand}
+              onChange={(e) => setCustomBand(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && searchCustomBand()}
+              placeholder="Enter artist name (e.g., Trey Anastasio Band, STS9)"
+              className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            />
+            <button
+              onClick={searchCustomBand}
+              disabled={loading}
+              className="bg-emerald-700 text-white px-6 py-3 rounded-lg hover:bg-emerald-800 font-medium disabled:bg-emerald-400 flex items-center gap-2"
+            >
+              <Search className="w-5 h-5" />
+              <span className="hidden sm:inline">Search</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Pre-defined Bands Search */}
+      <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Browse Jam Bands</h2>
         
         <div className="space-y-4">
           <button
@@ -400,12 +464,12 @@ const JamBandTracker = () => {
             className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 font-medium flex items-center justify-center gap-2 disabled:bg-emerald-400"
           >
             <Search className="w-5 h-5" />
-            {loading ? 'Searching Bandsintown...' : 'Search Real Shows'}
+            {loading ? 'Searching Bandsintown...' : 'Search Popular Jam Bands'}
           </button>
 
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
             <p className="text-sm text-emerald-800">
-              <strong>🎸 Real Data:</strong> Fetching actual upcoming shows from Bandsintown for Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more!
+              <strong>🎸 Popular Bands:</strong> Searches Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more!
             </p>
           </div>
         </div>
@@ -469,12 +533,13 @@ const JamBandTracker = () => {
       {!loading && upcomingShows.length === 0 && (
         <div className="bg-white rounded-lg shadow-sm p-8 sm:p-12 text-center">
           <Music className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-sm sm:text-base">Click "Search Real Shows" to find upcoming concerts</p>
-          <p className="text-xs text-gray-400 mt-2">Searches Bandsintown for Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more</p>
+          <p className="text-gray-500 text-sm sm:text-base">Search for any band or browse popular jam bands</p>
+          <p className="text-xs text-gray-400 mt-2">Try searching: Trey Anastasio Band, STS9, Lettuce, Aqueous, Lotus, Pigeons Playing Ping Pong</p>
         </div>
       )}
     </div>
-  );
+    );
+  };
 
   const HistoryTab = () => {
     const stats = {
