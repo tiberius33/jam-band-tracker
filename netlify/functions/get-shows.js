@@ -48,14 +48,20 @@ exports.handler = async (event, context) => {
         if (response.ok) {
           const events = await response.json();
           
+          // Log for debugging
+          console.log(`${bandName}: ${Array.isArray(events) ? events.length : 0} events found`);
+          
           if (Array.isArray(events) && events.length > 0) {
-            // Filter and format events
+            // Filter and format events - include shows from last 7 days and all future shows
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            
             const shows = events
               .filter(e => {
                 const showDate = new Date(e.datetime);
-                return showDate >= new Date();
+                return showDate >= sevenDaysAgo; // Show recent and upcoming
               })
-              .slice(0, 5) // Top 5 per band
+              .slice(0, 8) // Top 8 per band (more shows!)
               .map(e => ({
                 id: e.id || `${bandName}-${e.datetime}`,
                 artist: bandName,
