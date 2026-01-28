@@ -85,237 +85,32 @@ const JamBandTracker = () => {
     setSongStats(stats);
   };
 
-  // Generate realistic upcoming shows (sample data since Bandsintown blocks browser requests)
+  // Fetch real shows from Netlify Function (no CORS issues!)
   const searchUpcomingShows = async () => {
     setLoading(true);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
     try {
-      // Realistic upcoming show data for jam bands
-      const sampleShows = [
-        {
-          id: 'goose-1',
-          artist: 'Goose',
-          venue: 'The Fillmore',
-          city: 'San Francisco, CA',
-          date: 'Feb 28, 2026',
-          datetime: '2026-02-28T20:00:00',
-          coords: { lat: 37.7833, long: -122.4167 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Goose'],
-          description: 'Two night run at The Fillmore'
-        },
-        {
-          id: 'goose-2',
-          artist: 'Goose',
-          venue: 'Bill Graham Civic Auditorium',
-          city: 'San Francisco, CA',
-          date: 'Mar 1, 2026',
-          datetime: '2026-03-01T20:00:00',
-          coords: { lat: 37.7783, long: -122.4178 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Goose'],
-          description: 'Spring tour kickoff'
-        },
-        {
-          id: 'grateful-shred-1',
-          artist: 'Grateful Shred',
-          venue: 'The Chapel',
-          city: 'San Francisco, CA',
-          date: 'Feb 14, 2026',
-          datetime: '2026-02-14T20:00:00',
-          coords: { lat: 37.7489, long: -122.4221 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Grateful Shred'],
-          description: "Valentine's Day celebration"
-        },
-        {
-          id: 'grateful-shred-2',
-          artist: 'Grateful Shred',
-          venue: 'Terrapin Crossroads',
-          city: 'San Rafael, CA',
-          date: 'Mar 21, 2026',
-          datetime: '2026-03-21T19:30:00',
-          coords: { lat: 37.9735, long: -122.5311 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Grateful Shred'],
-          description: 'Spring equinox show'
-        },
-        {
-          id: 'dso-1',
-          artist: 'Dark Star Orchestra',
-          venue: 'The Warfield',
-          city: 'San Francisco, CA',
-          date: 'Mar 8, 2026',
-          datetime: '2026-03-08T20:00:00',
-          coords: { lat: 37.7824, long: -122.4101 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Dark Star Orchestra'],
-          description: 'Recreating 5/8/77 Barton Hall'
-        },
-        {
-          id: 'dso-2',
-          artist: 'Dark Star Orchestra',
-          venue: 'The Fox Theater',
-          city: 'Oakland, CA',
-          date: 'Apr 5, 2026',
-          datetime: '2026-04-05T20:00:00',
-          coords: { lat: 37.8083, long: -122.2697 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Dark Star Orchestra'],
-          description: 'Spring tour'
-        },
-        {
-          id: 'biscuits-1',
-          artist: 'Disco Biscuits',
-          venue: 'The Regency Ballroom',
-          city: 'San Francisco, CA',
-          date: 'Mar 28, 2026',
-          datetime: '2026-03-28T20:00:00',
-          coords: { lat: 37.7877, long: -122.4102 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Disco Biscuits'],
-          description: 'Trance-fusion experience'
-        },
-        {
-          id: 'biscuits-2',
-          artist: 'Disco Biscuits',
-          venue: 'August Hall',
-          city: 'San Francisco, CA',
-          date: 'May 15, 2026',
-          datetime: '2026-05-15T21:00:00',
-          coords: { lat: 37.7799, long: -122.4138 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Disco Biscuits'],
-          description: 'Late night set'
-        },
-        {
-          id: 'spafford-1',
-          artist: 'Spafford',
-          venue: 'The Independent',
-          city: 'San Francisco, CA',
-          date: 'Feb 22, 2026',
-          datetime: '2026-02-22T20:00:00',
-          coords: { lat: 37.7761, long: -122.4217 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Spafford'],
-          description: 'Winter west coast run'
-        },
-        {
-          id: 'spafford-2',
-          artist: 'Spafford',
-          venue: 'Catalyst Atrium',
-          city: 'Santa Cruz, CA',
-          date: 'Apr 18, 2026',
-          datetime: '2026-04-18T20:00:00',
-          coords: { lat: 36.9741, long: -122.0308 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Spafford', 'Pigeons Playing Ping Pong'],
-          description: 'With special guests PPPP'
-        },
-        {
-          id: 'donato-1',
-          artist: 'Daniel Donato',
-          venue: 'The Chapel',
-          city: 'San Francisco, CA',
-          date: 'Mar 14, 2026',
-          datetime: '2026-03-14T20:00:00',
-          coords: { lat: 37.7489, long: -122.4221 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Daniel Donato', 'Cosmic Country Band'],
-          description: 'Cosmic Country showcase'
-        },
-        {
-          id: 'donato-2',
-          artist: 'Daniel Donato',
-          venue: 'Slim\'s',
-          city: 'San Francisco, CA',
-          date: 'May 8, 2026',
-          datetime: '2026-05-08T20:00:00',
-          coords: { lat: 37.7824, long: -122.4135 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Daniel Donato'],
-          description: 'Spring tour - Cosmic Country vibes'
-        },
-        {
-          id: 'billy-1',
-          artist: 'Billy Strings',
-          venue: 'Chase Center',
-          city: 'San Francisco, CA',
-          date: 'Mar 15, 2026',
-          datetime: '2026-03-15T19:30:00',
-          coords: { lat: 37.7679, long: -122.3874 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Billy Strings', 'Molly Tuttle'],
-          description: 'With special guest Molly Tuttle'
-        },
-        {
-          id: 'phish-1',
-          artist: 'Phish',
-          venue: 'Shoreline Amphitheatre',
-          city: 'Mountain View, CA',
-          date: 'Apr 10, 2026',
-          datetime: '2026-04-10T19:00:00',
-          coords: { lat: 37.4267, long: -122.0806 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Phish'],
-          description: 'Spring tour'
-        },
-        {
-          id: 'dead-1',
-          artist: 'Dead & Company',
-          venue: 'Shoreline Amphitheatre',
-          city: 'Mountain View, CA',
-          date: 'May 20, 2026',
-          datetime: '2026-05-20T19:00:00',
-          coords: { lat: 37.4267, long: -122.0806 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Dead & Company'],
-          description: 'Summer tour'
-        },
-        {
-          id: 'panic-1',
-          artist: 'Widespread Panic',
-          venue: 'The Greek Theatre',
-          city: 'Berkeley, CA',
-          date: 'Jun 5, 2026',
-          datetime: '2026-06-05T19:30:00',
-          coords: { lat: 37.8733, long: -122.2542 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['Widespread Panic'],
-          description: 'Summer shows at The Greek'
-        },
-        {
-          id: 'um-1',
-          artist: "Umphrey's McGee",
-          venue: 'The Independent',
-          city: 'San Francisco, CA',
-          date: 'Jun 22, 2026',
-          datetime: '2026-06-22T20:00:00',
-          coords: { lat: 37.7761, long: -122.4217 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ["Umphrey's McGee"],
-          description: 'Intimate club show'
-        },
-        {
-          id: 'jrad-1',
-          artist: 'JRAD',
-          venue: 'August Hall',
-          city: 'San Francisco, CA',
-          date: 'Jul 12, 2026',
-          datetime: '2026-07-12T20:00:00',
-          coords: { lat: 37.7799, long: -122.4138 },
-          ticketUrl: 'https://www.bandsintown.com',
-          lineup: ['JRAD', 'Melvin Seals'],
-          description: 'With Melvin Seals & JGB'
-        }
-      ];
+      // Call our Netlify Function
+      const response = await fetch('/.netlify/functions/get-shows');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch shows');
+      }
 
-      setUpcomingShows(sampleShows);
+      const data = await response.json();
+      
+      if (data.success && data.shows) {
+        setUpcomingShows(data.shows);
+        
+        if (data.shows.length === 0) {
+          alert('No upcoming shows found for these artists right now. Check back later!');
+        }
+      } else {
+        throw new Error(data.error || 'Failed to load shows');
+      }
     } catch (error) {
-      console.error('Error loading shows:', error);
+      console.error('Error fetching shows:', error);
+      alert('Unable to load shows. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -605,12 +400,12 @@ const JamBandTracker = () => {
             className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 font-medium flex items-center justify-center gap-2 disabled:bg-emerald-400"
           >
             <Search className="w-5 h-5" />
-            {loading ? 'Loading Shows...' : 'Show Upcoming Concerts'}
+            {loading ? 'Searching Bandsintown...' : 'Search Real Shows'}
           </button>
 
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
             <p className="text-sm text-emerald-800">
-              <strong>🎸 Demo Mode:</strong> Showing sample Bay Area shows from Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more!
+              <strong>🎸 Real Data:</strong> Fetching actual upcoming shows from Bandsintown for Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more!
             </p>
           </div>
         </div>
@@ -674,8 +469,8 @@ const JamBandTracker = () => {
       {!loading && upcomingShows.length === 0 && (
         <div className="bg-white rounded-lg shadow-sm p-8 sm:p-12 text-center">
           <Music className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-sm sm:text-base">Click "Show Upcoming Concerts" above</p>
-          <p className="text-xs text-gray-400 mt-2">Featuring Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more</p>
+          <p className="text-gray-500 text-sm sm:text-base">Click "Search Real Shows" to find upcoming concerts</p>
+          <p className="text-xs text-gray-400 mt-2">Searches Bandsintown for Goose, Phish, Billy Strings, Grateful Shred, Dark Star Orchestra, Disco Biscuits, Spafford, Daniel Donato & more</p>
         </div>
       )}
     </div>
