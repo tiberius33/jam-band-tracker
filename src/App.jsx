@@ -35,12 +35,10 @@ const JamBandTracker = () => {
 
   const loadData = async () => {
     try {
-      // Load API key
+      // Load API key (optional - for future Setlist.fm integration)
       const keyResult = await window.storage.get('setlistfm-api-key');
       if (keyResult?.value) {
         setApiKey(keyResult.value);
-      } else {
-        setShowApiSetup(true);
       }
 
       // Load attended shows
@@ -87,53 +85,56 @@ const JamBandTracker = () => {
     setSongStats(stats);
   };
 
-  // Search Setlist.fm API for shows by artist
-  const searchSetlistFm = async () => {
-    if (!apiKey) {
-      setShowApiSetup(true);
-      return;
-    }
-
+  // Search Bandsintown API for upcoming shows by artist
+  const searchUpcomingShows = async () => {
     setLoading(true);
     const allShows = [];
 
     try {
-      // Search for each jam band
-      for (const band of jamBands.slice(0, 5)) { // Limit to avoid rate limits
+      // Search for each jam band on Bandsintown
+      for (const band of jamBands) {
         try {
           const response = await fetch(
-            `https://api.setlist.fm/rest/1.0/search/setlists?artistName=${encodeURIComponent(band.name)}&p=1`,
+            `https://rest.bandsintown.com/artists/${encodeURIComponent(band.name)}/events?app_id=jam_band_tracker`,
             {
               headers: {
-                'Accept': 'application/json',
-                'x-api-key': apiKey
+                'Accept': 'application/json'
               }
             }
           );
 
           if (response.ok) {
-            const data = await response.json();
-            if (data.setlist && data.setlist.length > 0) {
-              // Filter for upcoming shows and US shows
-              const shows = data.setlist
-                .filter(s => {
-                  const eventDate = s.eventDate;
-                  if (!eventDate) return false;
-                  const [day, month, year] = eventDate.split('-');
-                  const showDate = new Date(`${year}-${month}-${day}`);
+            const events = await response.json();
+            
+            if (events && Array.isArray(events) && events.length > 0) {
+              // Map Bandsintown events to our format
+              const shows = events
+                .filter(e => {
+                  // Only upcoming shows
+                  const showDate = new Date(e.datetime);
                   return showDate >= new Date();
                 })
-                .slice(0, 3) // Top 3 per band
-                .map(s => ({
-                  id: s.id,
-                  artist: s.artist?.name || band.name,
-                  venue: s.venue?.name || 'TBA',
-                  city: s.venue?.city ? `${s.venue.city.name}, ${s.venue.city.state || s.venue.city.country?.name || ''}` : 'TBA',
-                  date: s.eventDate,
-                  tourName: s.tour?.name,
-                  coords: s.venue?.city?.coords,
-                  setlistUrl: s.url,
-                  rawSetlist: s.sets?.set || []
+                .slice(0, 5) // Top 5 per band
+                .map(e => ({
+                  id: e.id,
+                  artist: band.name,
+                  venue: e.venue?.name || 'TBA',
+                  city: e.venue?.city && e.venue?.country 
+                    ? `${e.venue.city}, ${e.venue.region || e.venue.country}`
+                    : 'TBA',
+                  date: new Date(e.datetime).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  }),
+                  datetime: e.datetime,
+                  coords: e.venue?.latitude && e.venue?.longitude 
+                    ? { lat: e.venue.latitude, long: e.venue.longitude }
+                    : null,
+                  ticketUrl: e.offers?.[0]?.url || e.url,
+                  lineup: e.lineup || [band.name],
+                  description: e.description,
+                  source: 'bandsintown'
                 }));
               
               allShows.push(...shows);
@@ -145,16 +146,16 @@ const JamBandTracker = () => {
       }
 
       // Sort by date
-      allShows.sort((a, b) => {
-        const dateA = a.date ? new Date(a.date.split('-').reverse().join('-')) : new Date();
-        const dateB = b.date ? new Date(b.date.split('-').reverse().join('-')) : new Date();
-        return dateA - dateB;
-      });
+      allShows.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
       setUpcomingShows(allShows);
+      
+      if (allShows.length === 0) {
+        alert('No upcoming shows found for these artists. Try searching for different bands or check back later!');
+      }
     } catch (error) {
       console.error('Error fetching shows:', error);
-      alert('Error fetching shows. Please check your API key.');
+      alert('Error fetching shows. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -439,23 +440,17 @@ const JamBandTracker = () => {
         
         <div className="space-y-4">
           <button
-            onClick={searchSetlistFm}
+            onClick={searchUpcomingShows}
             disabled={loading}
             className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 font-medium flex items-center justify-center gap-2 disabled:bg-emerald-400"
           >
             <Search className="w-5 h-5" />
-            {loading ? 'Searching Setlist.fm...' : 'Search Real Shows'}
+            {loading ? 'Searching Bandsintown...' : 'Search Upcoming Shows'}
           </button>
 
-          {!apiKey && (
-            <button
-              onClick={() => setShowApiSetup(true)}
-              className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 font-medium flex items-center justify-center gap-2"
-            >
-              <Settings className="w-5 h-5" />
-              Setup API Key
-            </button>
-          )}
+          <p className="text-sm text-gray-500 text-center">
+            Powered by Bandsintown - Real upcoming concert data
+          </p>
         </div>
       </div>
 
@@ -468,7 +463,7 @@ const JamBandTracker = () => {
           <div className="space-y-3">
             {upcomingShows.map((show) => (
               <div key={show.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-emerald-400 transition-colors">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                <div className="flex flex-col gap-3">
                   <div className="flex-1">
                     <h4 className="font-bold text-gray-900 text-base sm:text-lg">{show.artist}</h4>
                     <div className="mt-2 space-y-1 text-xs sm:text-sm text-gray-600">
@@ -480,21 +475,33 @@ const JamBandTracker = () => {
                         <Calendar className="w-4 h-4 flex-shrink-0" />
                         <span>{show.date}</span>
                       </div>
-                      {show.tourName && (
+                      {show.lineup && show.lineup.length > 1 && (
                         <div className="flex items-center gap-2">
                           <Music className="w-4 h-4 flex-shrink-0" />
-                          <span>{show.tourName}</span>
+                          <span>w/ {show.lineup.slice(1).join(', ')}</span>
                         </div>
                       )}
                     </div>
                   </div>
-                  <button
-                    onClick={() => markAsAttended(show)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-medium flex items-center justify-center gap-1 w-full sm:w-auto"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Mark Attended
-                  </button>
+                  <div className="flex gap-2">
+                    {show.ticketUrl && (
+                      <a
+                        href={show.ticketUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 text-sm font-medium text-center"
+                      >
+                        Get Tickets
+                      </a>
+                    )}
+                    <button
+                      onClick={() => markAsAttended(show)}
+                      className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm font-medium flex items-center justify-center gap-1"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Log Show
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -505,7 +512,8 @@ const JamBandTracker = () => {
       {!loading && upcomingShows.length === 0 && (
         <div className="bg-white rounded-lg shadow-sm p-8 sm:p-12 text-center">
           <Music className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-sm sm:text-base">Click "Search Real Shows" to find jam bands</p>
+          <p className="text-gray-500 text-sm sm:text-base">Click "Search Upcoming Shows" to find jam band concerts</p>
+          <p className="text-xs text-gray-400 mt-2">Searching Goose, Phish, Dead & Company, Billy Strings, and more</p>
         </div>
       )}
     </div>
