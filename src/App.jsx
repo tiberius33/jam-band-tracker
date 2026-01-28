@@ -233,7 +233,7 @@ const JamBandTracker = () => {
                 <textarea
                   value={setlist}
                   onChange={(e) => setSetlist(e.target.value)}
-                  className="w-full h-48 sm:h-64 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full h-48 sm:h-64 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                   placeholder="Song 1&#10;Song 2&#10;Song 3..."
                 />
               </div>
@@ -249,7 +249,7 @@ const JamBandTracker = () => {
                     max="10"
                     value={rating}
                     onChange={(e) => setRating(parseInt(e.target.value))}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -261,7 +261,7 @@ const JamBandTracker = () => {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full h-24 sm:h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full h-24 sm:h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                   placeholder="Incredible show, best jam of the tour..."
                 />
               </div>
@@ -269,7 +269,7 @@ const JamBandTracker = () => {
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button
                   onClick={handleSave}
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium"
+                  className="flex-1 bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 font-medium"
                 >
                   Save Show
                 </button>
@@ -301,7 +301,7 @@ const JamBandTracker = () => {
             </p>
             
             <ol className="text-sm text-gray-600 list-decimal list-inside space-y-2">
-              <li>Go to <a href="https://www.setlist.fm/settings/api" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">setlist.fm/settings/api</a></li>
+              <li>Go to <a href="https://www.setlist.fm/settings/api" target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:underline">setlist.fm/settings/api</a></li>
               <li>Sign in or create a free account</li>
               <li>Apply for an API key</li>
               <li>Copy your key and paste it below</li>
@@ -311,7 +311,7 @@ const JamBandTracker = () => {
               type="text"
               value={key}
               onChange={(e) => setKey(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               placeholder="Paste your API key here"
             />
 
@@ -319,7 +319,7 @@ const JamBandTracker = () => {
               <button
                 onClick={() => saveApiKey(key)}
                 disabled={!key}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium disabled:bg-blue-300"
+                className="flex-1 bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 font-medium disabled:bg-emerald-300"
               >
                 Save API Key
               </button>
@@ -368,8 +368,8 @@ const JamBandTracker = () => {
               ))}
             </div>
 
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="mt-4 p-4 bg-emerald-50 rounded-lg">
+              <p className="text-sm text-emerald-800">
                 💡 <strong>Pro tip:</strong> For a full interactive map with pins, the app can be enhanced with Leaflet.js or Google Maps integration.
               </p>
             </div>
@@ -400,12 +400,12 @@ const JamBandTracker = () => {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-purple-50 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-purple-600">{uniqueSongs}</div>
+              <div className="bg-emerald-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-emerald-700">{uniqueSongs}</div>
                 <div className="text-sm text-gray-600">Unique Songs</div>
               </div>
-              <div className="bg-green-50 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-green-600">{totalSongs}</div>
+              <div className="bg-emerald-100 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-emerald-800">{totalSongs}</div>
                 <div className="text-sm text-gray-600">Total Performances</div>
               </div>
             </div>
@@ -419,7 +419,7 @@ const JamBandTracker = () => {
                     <span className="text-gray-900">{song}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="bg-blue-100 rounded-full px-3 py-1 text-sm font-medium text-blue-700">
+                    <div className="bg-emerald-100 rounded-full px-3 py-1 text-sm font-medium text-emerald-700">
                       {count}x
                     </div>
                   </div>
@@ -441,7 +441,7 @@ const JamBandTracker = () => {
           <button
             onClick={searchSetlistFm}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center gap-2 disabled:bg-blue-400"
+            className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 font-medium flex items-center justify-center gap-2 disabled:bg-emerald-400"
           >
             <Search className="w-5 h-5" />
             {loading ? 'Searching Setlist.fm...' : 'Search Real Shows'}
@@ -467,7 +467,7 @@ const JamBandTracker = () => {
           
           <div className="space-y-3">
             {upcomingShows.map((show) => (
-              <div key={show.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-blue-300 transition-colors">
+              <div key={show.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-emerald-400 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                   <div className="flex-1">
                     <h4 className="font-bold text-gray-900 text-base sm:text-lg">{show.artist}</h4>
@@ -524,15 +524,15 @@ const JamBandTracker = () => {
       <div className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6 text-center">
-            <div className="text-xl sm:text-3xl font-bold text-blue-600">{stats.total}</div>
+            <div className="text-xl sm:text-3xl font-bold text-emerald-700">{stats.total}</div>
             <div className="text-xs sm:text-sm text-gray-600 mt-1">Shows</div>
           </div>
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6 text-center">
-            <div className="text-xl sm:text-3xl font-bold text-green-600">{stats.artists}</div>
+            <div className="text-xl sm:text-3xl font-bold text-emerald-600">{stats.artists}</div>
             <div className="text-xs sm:text-sm text-gray-600 mt-1">Artists</div>
           </div>
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6 text-center">
-            <div className="text-xl sm:text-3xl font-bold text-purple-600">{stats.avgRating}</div>
+            <div className="text-xl sm:text-3xl font-bold text-emerald-500">{stats.avgRating}</div>
             <div className="text-xs sm:text-sm text-gray-600 mt-1">Avg</div>
           </div>
         </div>
@@ -602,7 +602,7 @@ const JamBandTracker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pb-safe">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 to-emerald-200 pb-safe">
       <div className="max-w-4xl mx-auto px-3 py-4 sm:px-4 sm:py-8">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">Jam Band Tracker</h1>
@@ -622,7 +622,7 @@ const JamBandTracker = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 font-medium transition-colors text-sm sm:text-base ${
                   activeTab === tab.id
-                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    ? 'text-emerald-700 border-b-2 border-emerald-700'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -630,7 +630,7 @@ const JamBandTracker = () => {
                   <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span className="hidden sm:inline">{tab.label}</span>
                   {tab.count !== undefined && tab.count > 0 && (
-                    <span className="ml-1 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
+                    <span className="ml-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">
                       {tab.count}
                     </span>
                   )}
